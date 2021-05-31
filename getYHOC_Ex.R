@@ -7,7 +7,7 @@ getYHOOOC = function(symbol,x)
   chain <- fromJSON(url)
   chain <- as.vector(chain)
   # CALLS
-  CALLS <- as.data.frame(rbindlist(chain$optionChain$result[[1]]$options[[1]]$calls, use.names = TRUE,fill = TRUE))
+  CALLS <- as.data.frame(rbindlist(chain$optionChain$result$options[[1]]$calls, use.names = TRUE,fill = TRUE))
   # FIX THE TIMESTAMPS
   CALLS$lastTradeDate <- as.Date(as.POSIXct(as.numeric(as.character(CALLS$lastTradeDate)),
                                             origin = "1970-01-01",tz="EST"))
@@ -19,7 +19,7 @@ getYHOOOC = function(symbol,x)
   CALLS <- cbind(CALLS,as.data.frame(rep("c",nrow(CALLS))))
   colnames(CALLS) <- NOMS
   # PUTS
-  PUTS <- as.data.frame(rbindlist(chain$optionChain$result[[1]]$options[[1]]$puts,use.names = TRUE,fill=TRUE))
+  PUTS <- as.data.frame(rbindlist(chain$optionChain$result$options[[1]]$puts,use.names = TRUE,fill=TRUE))
   # FIX THE TIMESTAMPS
   PUTS$lastTradeDate <- as.Date(as.POSIXct(as.numeric(as.character(PUTS$lastTradeDate)),
                                            origin = "1970-01-01",tz="EST"))
@@ -45,7 +45,7 @@ getOC = function(x)
   {
     # ALL EXPIRATIONS DATES
     chain <- as.vector(chain)
-    EXP <- chain$optionChain$result[[1]]$expirationDates
+    EXP <- chain$optionChain$result$expirationDates[[1]]
     # apply a function 
     all <- lapply(as.list(EXP), function(x){
       tmp <- try(getYHOOOC(symbol=symbol, x))
@@ -55,7 +55,7 @@ getOC = function(x)
     # COMBINE ALL EXPIRATIONS
     ALL <- rbindlist(all,use.names = TRUE, fill = TRUE)
     # GET ALL THE METADATA
-    LIST1 <- chain$optionChain$result[[1]]$quote
+    LIST1 <- chain$optionChain$result$quote
     METADATA <- as.data.frame(do.call(cbind,LIST1))
     # WANT <- names(METADATA)
     WANT <- c("regularMarketChangePercent","regularMarketPreviousClose","bid","ask",
